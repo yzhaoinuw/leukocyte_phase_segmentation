@@ -21,7 +21,8 @@ from dataset import SegmentationDataset, Subset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data/test"
-MODEL_PATH = "./model/"
+SPLIT_NUM = 0
+MODEL_PATH = "./model/split"
 model_name = "model_CELoss_weighted_30"
 transform_fn = transforms.Compose(
     [transforms.ToTensor(),
