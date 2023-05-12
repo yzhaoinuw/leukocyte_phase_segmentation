@@ -22,8 +22,8 @@ from dataset import SegmentationDataset, Subset
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data/test"
 SPLIT_NUM = 0
-MODEL_PATH = "./model/split"
-model_name = "model_CELoss_weighted_30"
+MODEL_PATH = f"./model/split_{SPLIT_NUM}/"
+model_name = "model_CELoss_weighted_29.pth"
 transform_fn = transforms.Compose(
     [transforms.ToTensor(),
     ]
@@ -57,7 +57,7 @@ test_loss = test_loss/batch
 print(f"test loss: {loss:.3f}")
 
 #%%
-sample, mask = test_data[-1]
+sample, mask = test_data[2]
 output = model(sample.unsqueeze(0))
 pred_masks = F.softmax(output, dim=1)
 pred_masks = torch.argmax(pred_masks, dim=1)
