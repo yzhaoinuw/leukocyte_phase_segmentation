@@ -23,17 +23,18 @@ from dataset import SegmentationDataset, Subset
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-DATA_PATH = "./data/train"
+DATA_PATH = "./data_large/train"
 CLASS_NUM = 4
 N_SPLIT = 4
 TRAIN_BS = 16
 VAL_BS = 16
-MODEL_PATH = f"./model_upconv/split_{N_SPLIT}/"
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{N_SPLIT}/"
 Path(MODEL_PATH).mkdir(parents=True, exist_ok=True)
 
 transform_fn = transforms.Compose(
     [
-        transforms.ToTensor(),
+        transforms.ToTensor(),  # to tensor AND scale to [0,1]
+        transforms.RandomApply([transforms.GaussianBlur(kernel_size=5)], p=0.5),
     ]
 )
 
@@ -44,6 +45,7 @@ splits = kf.split(list(range(data_size)))
 train_indices, val_indices = list(splits)[N_SPLIT]
 train_data = Subset(data, train_indices)
 val_data = Subset(data, val_indices)
+
 train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
 val_dataloader = DataLoader(val_data, batch_size=16)
 class_count = torch.zeros(CLASS_NUM)
