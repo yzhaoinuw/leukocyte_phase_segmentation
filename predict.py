@@ -22,11 +22,11 @@ from dataset import SegmentationDataset
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-DATA_PATH = "./data/test"
+DATA_PATH = "./data_large/test"
 SPLIT_NUM = 4
 CLASS_NUM = 4
-MODEL_PATH = f"./model_upconv/split_{SPLIT_NUM}/"
-model_name = "model_CELoss_weighted_36.pth"
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
+model_name = "model_CELoss_weighted_43.pth"
 transform_fn = transforms.Compose(
     [
         transforms.ToTensor(),
@@ -47,6 +47,7 @@ file_handler = logging.FileHandler(filename=MODEL_PATH + "test.log", mode="w")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+logging.getLogger("logger").info(f"Model name: {MODEL_PATH}{model_name}")
 logging.getLogger("logger").info(f"Phase class count: {class_count}")
 logging.getLogger("logger").info(
     f"Phase class count: {class_count / torch.sum(class_count)} \n"
@@ -88,11 +89,10 @@ for handler in handlers:
     handler.close()
 
 # %%
-"""
+
 sample, mask = test_data[5]
 output = model(sample.unsqueeze(0))
 pred_masks = F.softmax(output, dim=1)
 pred_masks = torch.argmax(pred_masks, dim=1)
 show_image(pred_masks.squeeze())
 show_image(mask)
-"""

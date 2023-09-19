@@ -17,18 +17,18 @@ import torchvision.transforms as transforms
 from torchmetrics import ConfusionMatrix
 from sklearn.model_selection import KFold
 
-from utils import calculate_dice, calculate_accuracy
 from unet import UNet
-from dataset import SegmentationDataset, Subset
+from dataset import SegmentationDataset
+from utils import calculate_dice, calculate_accuracy, SobelTransform
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-DATA_PATH = "./data/train"
+DATA_PATH = "./data_large/train"
 CLASS_NUM = 4
-N_SPLIT = 4
+N_SPLIT = 1
 TRAIN_BS = 16
 VAL_BS = 16
-MODEL_PATH = f"./model_upconv/split_{N_SPLIT}/"
+MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random/split_{N_SPLIT}/"
 Path(MODEL_PATH).mkdir(parents=True, exist_ok=True)
 
 transform_fn = transforms.Compose(
@@ -37,13 +37,25 @@ transform_fn = transforms.Compose(
     ]
 )
 
-data = SegmentationDataset(DATA_PATH, transform=transform_fn)
+transform_train = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.RandomApply([transforms.GaussianBlur(kernel_size=5)], p=0.5),
+        transforms.RandomApply([SobelTransform()], p=0.5),
+    ]
+)
+
+data = SegmentationDataset(DATA_PATH)
 data_size = len(data)
 kf = KFold(n_splits=5)
 splits = kf.split(list(range(data_size)))
 train_indices, val_indices = list(splits)[N_SPLIT]
-train_data = Subset(data, train_indices)
-val_data = Subset(data, val_indices)
+
+train_data = SegmentationDataset(
+    DATA_PATH, set(train_indices), transform=transform_train
+)
+val_data = SegmentationDataset(DATA_PATH, set(val_indices), transform=transform_fn)
+
 train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
 val_dataloader = DataLoader(val_data, batch_size=16)
 class_count = torch.zeros(CLASS_NUM)

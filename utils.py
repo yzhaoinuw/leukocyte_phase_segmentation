@@ -7,6 +7,7 @@ Created on Mon May  8 11:52:29 2023
 
 import torch
 import torch.nn.functional as F
+from torchvision import transforms
 import matplotlib.pyplot as plt
 
 
@@ -38,3 +39,33 @@ def dice_loss(output: torch.Tensor, masks: torch.Tensor, smooth=1):
     area_total_sum = torch.sum(area_total, dim=(-1, -2))
     dice = (2 * intersection_sum + smooth) / (area_total_sum + smooth)
     return 1 - torch.mean(dice)
+
+
+class SobelTransform:
+    def __init__(self):
+        self.sobel_kernel_x = (
+            torch.tensor([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+            .float()
+            .unsqueeze(0)
+            .unsqueeze(0)
+        )
+        self.sobel_kernel_y = (
+            torch.tensor([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+            .float()
+            .unsqueeze(0)
+            .unsqueeze(0)
+        )
+
+    def __call__(self, image):
+        # Ensure the image is a PyTorch tensor. If not, convert it.
+        if not isinstance(image, torch.Tensor):
+            image = transforms.ToTensor()(image)
+
+        # Apply the Sobel filter
+        G_x = F.conv2d(image.unsqueeze(0), self.sobel_kernel_x, padding=1)
+        G_y = F.conv2d(image.unsqueeze(0), self.sobel_kernel_y, padding=1)
+
+        # Compute the gradient magnitude and remove the batch dimension
+        G_magnitude = torch.sqrt(G_x**2 + G_y**2).squeeze(0)
+
+        return G_magnitude
