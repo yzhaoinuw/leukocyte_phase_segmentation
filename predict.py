@@ -23,10 +23,17 @@ from dataset import SegmentationDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data_large/test"
+<<<<<<< HEAD
 SPLIT_NUM = 4
 CLASS_NUM = 4
 MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
 model_name = "model_CELoss_weighted_43.pth"
+=======
+SPLIT_NUM = 1
+CLASS_NUM = 4
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
+model_name = "model_CELoss_weighted_51.pth"
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 transform_fn = transforms.Compose(
     [
         transforms.ToTensor(),
