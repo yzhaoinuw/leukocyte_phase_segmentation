@@ -5,6 +5,8 @@ Created on Tue May  9 11:03:50 2023
 @author: Yue
 """
 
+import os
+import glob
 import logging
 
 from tqdm import tqdm
@@ -23,17 +25,12 @@ from dataset import SegmentationDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data_large/test"
-<<<<<<< HEAD
-SPLIT_NUM = 4
-CLASS_NUM = 4
-MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
-model_name = "model_CELoss_weighted_43.pth"
-=======
+
 SPLIT_NUM = 1
 CLASS_NUM = 4
-MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
-model_name = "model_CELoss_weighted_51.pth"
->>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
+MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random0.8/split_{SPLIT_NUM}/"
+model_path = glob.glob(os.path.join(MODEL_PATH, "*.pth"))[0]
+
 transform_fn = transforms.Compose(
     [
         transforms.ToTensor(),
@@ -54,7 +51,7 @@ file_handler = logging.FileHandler(filename=MODEL_PATH + "test.log", mode="w")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-logging.getLogger("logger").info(f"Model name: {MODEL_PATH}{model_name}")
+logging.getLogger("logger").info(f"Model name: {model_path}")
 logging.getLogger("logger").info(f"Phase class count: {class_count}")
 logging.getLogger("logger").info(
     f"Phase class count: {class_count / torch.sum(class_count)} \n"
@@ -63,7 +60,7 @@ logging.getLogger("logger").info(
 loss_fn = nn.CrossEntropyLoss()
 confmat = ConfusionMatrix(task="multiclass", num_classes=4)
 model = UNet(padding=True, up_mode="upconv")
-model.load_state_dict(torch.load(MODEL_PATH + model_name))
+model.load_state_dict(torch.load(model_path))
 model.eval()
 
 test_loss = 0
