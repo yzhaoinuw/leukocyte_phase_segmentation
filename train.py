@@ -57,8 +57,8 @@ train_data = SegmentationDataset(
     DATA_PATH, set(train_indices), transform=transform_train
 )
 val_data = SegmentationDataset(DATA_PATH, set(val_indices), transform=transform_fn)
-train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
-val_dataloader = DataLoader(val_data, batch_size=16)
+train_dataloader = DataLoader(train_data, batch_size=TRAIN_BS, shuffle=True)
+val_dataloader = DataLoader(val_data, batch_size=VAL_BS)
 class_count = torch.zeros(CLASS_NUM)
 for batch, (images, masks) in enumerate(train_dataloader, 1):
     class_count += masks.unique(return_counts=True)[1]
