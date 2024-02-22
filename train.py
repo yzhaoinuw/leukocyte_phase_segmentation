@@ -25,7 +25,7 @@ from utils import calculate_dice, calculate_accuracy, SobelTransform
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data_large/train"
 CLASS_NUM = 4
-N_SPLIT = 2
+N_SPLIT = 4
 TRAIN_BS = 16
 VAL_BS = 16
 MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random0.8/split_{N_SPLIT}/"

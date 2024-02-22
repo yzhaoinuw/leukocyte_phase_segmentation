@@ -26,8 +26,9 @@ from dataset import SegmentationDataset
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data_large/test"
 
-SPLIT_NUM = 1
+SPLIT_NUM = 4
 CLASS_NUM = 4
+BATCH_SIZE = 16
 MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random0.8/split_{SPLIT_NUM}/"
 model_path = glob.glob(os.path.join(MODEL_PATH, "*.pth"))[0]
 
@@ -38,7 +39,7 @@ transform_fn = transforms.Compose(
 )
 
 test_data = SegmentationDataset(DATA_PATH, transform=transform_fn)
-test_dataloader = DataLoader(test_data, batch_size=16)
+test_dataloader = DataLoader(test_data, batch_size=BATCH_SIZE)
 
 class_count = torch.zeros(CLASS_NUM)
 for batch, (images, masks) in enumerate(test_dataloader, 1):
@@ -64,7 +65,7 @@ model.load_state_dict(torch.load(model_path))
 model.eval()
 
 test_loss = 0
-with tqdm(total=len(test_data), unit=" batch") as pbar:
+with tqdm(total=len(test_data), unit=" images") as pbar:
     with torch.no_grad():
         for batch, (images, masks) in enumerate(test_dataloader, 1):
             images, masks = images, masks.long()
@@ -76,7 +77,7 @@ with tqdm(total=len(test_data), unit=" batch") as pbar:
             pred_masks = F.softmax(output, dim=1)
             pred_masks = torch.argmax(pred_masks, dim=1)
             confmat.update(pred_masks, masks)
-            pbar.update(images.shape[0])
+            pbar.update(BATCH_SIZE)
     pbar.set_postfix({"Batch": batch, "test loss (in progress)": loss})
 
 dice = calculate_dice(confmat.confmat)
