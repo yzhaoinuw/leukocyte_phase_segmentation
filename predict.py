@@ -25,6 +25,7 @@ from dataset import SegmentationDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DATA_PATH = "./data_large/test"
+<<<<<<< HEAD
 
 SPLIT_NUM = 4
 CLASS_NUM = 4
@@ -32,6 +33,12 @@ BATCH_SIZE = 16
 MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random0.8/split_{SPLIT_NUM}/"
 model_path = glob.glob(os.path.join(MODEL_PATH, "*.pth"))[0]
 
+=======
+SPLIT_NUM = 1
+CLASS_NUM = 4
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
+model_name = "model_CELoss_weighted_51.pth"
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 transform_fn = transforms.Compose(
     [
         transforms.ToTensor(),
@@ -52,7 +59,11 @@ file_handler = logging.FileHandler(filename=MODEL_PATH + "test.log", mode="w")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+<<<<<<< HEAD
 logging.getLogger("logger").info(f"Model name: {model_path}")
+=======
+logging.getLogger("logger").info(f"Model name: {MODEL_PATH}{model_name}")
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 logging.getLogger("logger").info(f"Phase class count: {class_count}")
 logging.getLogger("logger").info(
     f"Phase class count: {class_count / torch.sum(class_count)} \n"

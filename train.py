@@ -28,12 +28,20 @@ CLASS_NUM = 4
 N_SPLIT = 4
 TRAIN_BS = 16
 VAL_BS = 16
+<<<<<<< HEAD
 MODEL_PATH = f"./model_large_upconv_gaussian_sobel_random0.8/split_{N_SPLIT}/"
+=======
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{N_SPLIT}/"
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 Path(MODEL_PATH).mkdir(parents=True, exist_ok=True)
 
 transform_fn = transforms.Compose(
     [
         transforms.ToTensor(),  # to tensor AND scale to [0,1]
+<<<<<<< HEAD
+=======
+        transforms.RandomApply([transforms.GaussianBlur(kernel_size=5)], p=0.5),
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
     ]
 )
 
@@ -52,11 +60,17 @@ data_size = len(data)
 kf = KFold(n_splits=5)
 splits = kf.split(list(range(data_size)))
 train_indices, val_indices = list(splits)[N_SPLIT]
+<<<<<<< HEAD
 
 train_data = SegmentationDataset(
     DATA_PATH, set(train_indices), transform=transform_train
 )
 val_data = SegmentationDataset(DATA_PATH, set(val_indices), transform=transform_fn)
+=======
+train_data = Subset(data, train_indices)
+val_data = Subset(data, val_indices)
+
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
 val_dataloader = DataLoader(val_data, batch_size=16)
 class_count = torch.zeros(CLASS_NUM)

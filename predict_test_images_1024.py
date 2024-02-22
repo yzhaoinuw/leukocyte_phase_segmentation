@@ -6,7 +6,10 @@ Created on Wed Aug 23 18:22:30 2023
 """
 
 import os
+<<<<<<< HEAD
 from pathlib import Path
+=======
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 import matplotlib.pyplot as plt
 
 import cv2
@@ -29,6 +32,7 @@ from config import mask_mapping_reversed
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+<<<<<<< HEAD
 DATA_PATH = "./test_images/"
 FOLDER_NAME = "PC4"
 SPLIT_NUM = 1
@@ -37,6 +41,13 @@ SAVE_PATH = os.path.join(DATA_PATH, FOLDER_NAME + "_pred")
 MODEL_NAME = "model_CELoss_weighted_51.pth"
 
 Path(SAVE_PATH).mkdir(parents=True, exist_ok=True)
+=======
+DATA_PATH = "./test_images/1024"
+SPLIT_NUM = 1
+MODEL_PATH = f"./model_large_upconv_gaussianBlur_random/split_{SPLIT_NUM}/"
+SAVE_PATH = "./test_images/1024_pred_masks"
+model_name = "model_CELoss_weighted_51.pth"
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 
 channels, height, width = 1, 1024, 1024
 patch_size = 256
@@ -49,18 +60,30 @@ transform_fn = transforms.Compose(
 )
 
 model = UNet(padding=True, up_mode="upconv")
+<<<<<<< HEAD
 model.load_state_dict(torch.load(MODEL_PATH + MODEL_NAME))
 model.eval()
 
 # %%
 folder_path = os.path.join(DATA_PATH, FOLDER_NAME)
 img_folder = os.listdir(folder_path)
+=======
+model.load_state_dict(torch.load(MODEL_PATH + model_name))
+model.eval()
+
+# %%
+img_folder = os.listdir(DATA_PATH)
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
 for img_file in img_folder:
     if not img_file.endswith(".tif"):
         continue
     print(img_file)
     img_name = img_file.split(".tif")[0]
+<<<<<<< HEAD
     img_path = os.path.join(folder_path, img_file)
+=======
+    img_path = os.path.join(DATA_PATH, img_file)
+>>>>>>> 41ca1af4ce3ebf866405817c8d0a01f77829cf8b
     image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
     image = transform_fn(image)
     # Sliding window parameters
